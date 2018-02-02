@@ -53,7 +53,7 @@ function processContent(code, index, defines) {
     else {
         out.index = match.index + 1;
     }
-    return process(code, out.index, defines);
+    return processContent(code, out.index, defines);
 }
 function uncomment(code, from) {
     reg_commentEnd.lastIndex = from.index;

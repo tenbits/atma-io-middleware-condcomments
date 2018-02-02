@@ -4,7 +4,7 @@ import { Compiler } from 'atma-io-middleware-base'
  *  Handler can accept as file content - JavaScript String or UglifJS AST Tree
  */
 
-export default function process(content, file, compiler: Compiler) {
+export default function process(content: string, file, compiler: Compiler) {
 	let defines = compiler.getOption('defines');
 	if (defines == null) {
 		return;
@@ -61,7 +61,7 @@ function processContent(code, index, defines) {
 		out.index = match.index + 1;
 	}
 
-	return process(code, out.index, defines);
+	return processContent(code, out.index, defines);
 }
 
 function uncomment(code, from) {
