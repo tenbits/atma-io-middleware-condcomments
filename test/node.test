@@ -1,0 +1,30 @@
+import Midd from '../index'
+import * as io from 'atma-io'
+
+
+io.File.registerExtensions({
+	"js": [
+		[ Midd, 'read']
+	]
+});
+console.log('>>', io.File.read('/test/foo.js'));
+
+// var FILE = '/test/foo.es6';
+// UTest({
+	
+
+// 	'io.File.read': function(){
+		
+// 		var content = io.File.read(FILE);
+// 		has_(content, 'function');
+// 	},
+// 	'io.File.readAsync': function(){
+		
+// 		return io
+// 			.File
+// 			.readAsync(FILE)
+// 			.done(function(content){
+// 				has_(content, 'function');
+// 			});
+// 	}
+// });
