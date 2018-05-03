@@ -25,7 +25,7 @@ function process(content, file, compiler) {
     };
 }
 exports.default = process;
-var reg_commentEnd = /\*\//g, reg_inlineEnd = /\/\*[ \t#]*if[^\n\r]+\*\//g, reg_endIf = /(\/\*[\t #]*endif[\t ]*\*\/)|([ \t]*\/\/[ \t#]*endif[ \t]*$)/gm, reg_expression = /^[ \t]*((\/\/)|(\/\*))[ \t#]*if[ \t]*(([^\s]+$)|(\([^)\n\r]+\)))/gm;
+var reg_commentEnd = /\*\//g, reg_inlineEnd = /\/\*[ \t]*#if[^\n\r]+\*\//g, reg_endIf = /(\/\*[\t ]*#endif[\t ]*\*\/)|([ \t]*\/\/[ \t]*#endif[ \t]*$)/gm, reg_expression = /^[ \t]*((\/\/)|(\/\*+))[ \t]*#if[ \t]*(([^\s]+$)|(\([^)\n\r]+\)))/gm;
 function processContent(code, index, defines) {
     reg_expression.lastIndex = index || 0;
     var match = reg_expression.exec(code);

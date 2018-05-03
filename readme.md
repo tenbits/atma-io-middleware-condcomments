@@ -44,16 +44,16 @@ Expressions are usual javascript expressions. The values for variables are taken
     ```json
         {
             "devDependencies": {
-                "atma-io-middleware-uglify"
+                "atma-io-middleware-condcomments"
             },
             "atma": {
                 "plugins": [
-                    "atma-io-middleware-uglify"
+                    "atma-io-middleware-condcomments"
                 ],
                 "settings": {
 					"atma-io-middleware-condcomments": {
-                        define: {
-                            DEBUG: true
+                        "defines": {
+                            "DEBUG": true
                         }
                     }
                 }
