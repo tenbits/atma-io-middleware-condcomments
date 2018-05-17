@@ -16,6 +16,10 @@ io.File.registerExtensions({
 
 UTest({
 	'should remove uncommented block and uncomment the commented one' () {
-		eq_(io.File.read('/test/fixtures/foo.js').trim(), 'commented');
+		let content = io.File.read('/test/fixtures/foo.js');
+		eq_(
+			content.trim(), 
+			'commented',
+			`commented block should be now uncommented add has only one word: 'commented'`);
 	}
 })

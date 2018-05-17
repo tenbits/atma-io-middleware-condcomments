@@ -30,7 +30,7 @@ There are 2 strategies: **to comment** and **to uncomment**. You should use  `to
 
 ###### Expressions
 
-Expressions are usual javascript expressions. The values for variables are taken from a) ENV and b) process argv  c) middleware settings.
+Expressions are usual javascript expressions. The values for variables are taken from a) ENV and b) process argv c) middleware settings.
 
 ###### Embed into the project
 
