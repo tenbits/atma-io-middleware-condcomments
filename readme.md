@@ -1,4 +1,4 @@
-Conditional comments file middleware for Atma.IO and Atma.Toolkit
+Conditional comments file middleware for Atma.IO and Atma.Toolkit. Supports JavaScript and HTML comments.
 -----
 
 The Plugin provides a custom middleware to exclude/include conditional comments:
@@ -55,7 +55,16 @@ Expressions are usual javascript expressions. The values for variables are taken
                         "defines": {
                             "DEBUG": true
                         }
+                    },
+                    "io": {
+                        "extensions": {
+                            "ts": [
+                                "atma-io-middleware-condcomments:read",
+                                "atma-loader-ts:read"
+                            ]
+                        }
                     }
+
                 }
             }
         }

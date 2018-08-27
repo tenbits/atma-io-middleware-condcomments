@@ -2,9 +2,7 @@
 				// source ./templates/RootModule.js
 				(function(){
 					
-					var _node_modules_appcfg_lib_config = {};
-var _src_condcomments = {};
-
+					
 				// source ./templates/ModuleSimplified.js
 				var _node_modules_appcfg_lib_config;
 				(function () {
@@ -1544,35 +1542,35 @@ function processMiddleware(content, file, compiler) {
         compiler.getOption('defines'),
         compiler.getOption('varDefs'),
     ];
+    var handler = HANDLERS.find(function (x) { return x.supports(file); });
     return {
-        content: processContent(content, 0, defines),
+        content: processContent(content, 0, defines, handler),
         sourceMap: null
     };
 }
 exports.default = processMiddleware;
-function processContent(code, index, defines) {
-    CommentBlock.reg_expression.lastIndex = index || 0;
-    var match = CommentBlock.reg_expression.exec(code);
+function processContent(code, index, defines, handler) {
+    var match = handler.next(code, index);
     if (match == null) {
         return code;
     }
-    var doAction = Executor.exec(match[4], defines);
-    var status = CommentBlock.getStatus(code, match);
+    var doAction = Executor.exec(match.expression, defines);
+    var status = handler.getStatus(code, match);
     switch (true) {
         case (status === 'commented' && doAction === true): {
-            _a = CommentBlock.uncomment(code, match), code = _a[0], index = _a[1];
+            _a = handler.uncomment(code, match), code = _a[0], index = _a[1];
             break;
         }
         case (status === 'uncommented' && doAction === false): {
-            _b = CommentBlock.comment(code, match), code = _b[0], index = _b[1];
+            _b = handler.comment(code, match), code = _b[0], index = _b[1];
             break;
         }
         default: {
-            index = match.index + 1;
+            index = match.match.index + 1;
             break;
         }
     }
-    return processContent(code, index, defines);
+    return processContent(code, index, defines, handler);
     var _a, _b;
 }
 var Executor;
@@ -1617,46 +1615,84 @@ var Executor;
     Executor.exec = exec;
     ;
 })(Executor || (Executor = {}));
-var CommentBlock;
-(function (CommentBlock) {
-    CommentBlock.reg_commentEnd = /\*\//g;
-    CommentBlock.reg_inlineEnd = /\/\*[ \t]*#if[^\n\r]+\*\//g;
-    CommentBlock.reg_endIf = /(\/\*[\t ]*#endif[\t ]*\*\/)|([ \t]*\/\/[ \t]*#endif[ \t]*$)/gm;
-    CommentBlock.reg_expression = /^[ \t]*((\/\/)|(\/\*+))[ \t]*#if[ \t]*(([^\s]+$)|(\([^)\n\r]+\)))/gm;
-    function getStatus(code, currentMatch) {
-        if (currentMatch[1] === '//') {
-            // Line Comment found. Means the code block itself is uncommented
-            return 'uncommented';
+var CommentBlockHandler = /** @class */ (function () {
+    function CommentBlockHandler(data) {
+        this.reg_commentEnd = data.reg_commentEnd;
+        this.reg_oneLineComment = data.reg_oneLineComment;
+        this.reg_IF_Comment = data.reg_IF_Comment;
+        this.reg_IF_Expression_Index = data.reg_IF_Expression_Index;
+        this.reg_ENDIF_Comment = data.reg_ENDIF_Comment;
+    }
+    CommentBlockHandler.prototype.supports = function (file) {
+        return true;
+    };
+    CommentBlockHandler.prototype.next = function (code, index) {
+        this.reg_IF_Comment.lastIndex = index;
+        var match = this.reg_IF_Comment.exec(code);
+        if (match == null) {
+            return null;
         }
-        CommentBlock.reg_inlineEnd.lastIndex = currentMatch.index;
-        var endMatch = CommentBlock.reg_inlineEnd.exec(code);
+        var idxs = this.reg_IF_Expression_Index;
+        var idx = idxs.find(function (x) { return Boolean(match[x]); });
+        return {
+            expression: match[idx],
+            match: match
+        };
+    };
+    CommentBlockHandler.prototype.getStatus = function (code, expressionMatch) {
+        var currentMatch = expressionMatch.match;
+        this.reg_oneLineComment.lastIndex = currentMatch.index;
+        var endMatch = this.reg_oneLineComment.exec(code);
         if (endMatch != null && endMatch.index === currentMatch.index) {
             return 'uncommented';
         }
         return 'commented';
-    }
-    CommentBlock.getStatus = getStatus;
-    function uncomment(code, currentMatch) {
+    };
+    CommentBlockHandler.prototype.uncomment = function (code, expressionMatch) {
+        var currentMatch = expressionMatch.match;
         var currentEndIndex = currentMatch.index + currentMatch[0].length;
-        CommentBlock.reg_commentEnd.lastIndex = currentEndIndex;
-        var match = CommentBlock.reg_commentEnd.exec(code), end = match.index + match[0].length, value = code.substring(0, currentMatch.index)
+        this.reg_commentEnd.lastIndex = currentEndIndex;
+        var match = this.reg_commentEnd.exec(code), end = match.index + match[0].length, value = code.substring(0, currentMatch.index)
             + code.substring(currentEndIndex, match.index)
             + code.substring(end);
         var index = currentMatch.index + (match.index - currentEndIndex);
         return [value, index];
-    }
-    CommentBlock.uncomment = uncomment;
-    function comment(code, currentMatch) {
+    };
+    CommentBlockHandler.prototype.comment = function (code, expressionMatch) {
+        var currentMatch = expressionMatch.match;
         var currentEndIndex = currentMatch.index + currentMatch[0].length;
-        CommentBlock.reg_endIf.lastIndex = currentEndIndex;
-        var match = CommentBlock.reg_endIf.exec(code);
+        this.reg_ENDIF_Comment.lastIndex = currentEndIndex;
+        var match = this.reg_ENDIF_Comment.exec(code);
         var value = code.substring(0, currentMatch.index)
             + code.substring(match.index + match[0].length);
         var index = currentMatch.index;
         return [value, index];
-    }
-    CommentBlock.comment = comment;
-})(CommentBlock || (CommentBlock = {}));
+    };
+    return CommentBlockHandler;
+}());
+;
+var HANDLERS = [
+    new CommentBlockHandler({
+        reg_commentEnd: /-->/g,
+        reg_oneLineComment: /^[ \t]*<!--[ \t]*#if[^\n\r]+-->/gm,
+        reg_IF_Expression_Index: [1],
+        reg_IF_Comment: /^[ \t]*<!--[ \t]*#if[ \t]*(([^\s]+$)|(\([^)\n\r]+\)))/gm,
+        reg_ENDIF_Comment: /^[ \t]*<!--[ \t]*#endif[\s]*-->/gm,
+        supports: function (file) {
+            return file.uri.extension.includes('html');
+        }
+    }),
+    new CommentBlockHandler({
+        reg_commentEnd: /\*\//g,
+        reg_oneLineComment: /^[ \t]*((\/\/)|(\/\*[^\n\r]+\*\/))[ \t]*$/gm,
+        reg_IF_Comment: /^[ \t]*((\/\/)|(\/\*+))[ \t]*#if[ \t]*(([^\s]+$)|(\([^)\n\r]+\)))/gm,
+        reg_IF_Expression_Index: [4],
+        reg_ENDIF_Comment: /(\/\*[\t ]*#endif[\t ]*\*\/)|([ \t]*\/\/[ \t]*#endif[ \t]*$)/gm,
+        supports: function () {
+            return true;
+        }
+    })
+];
 ;
 				
 					function isObject(x) {
