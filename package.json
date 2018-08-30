@@ -1,6 +1,6 @@
 {
     "name": "atma-io-middleware-condcomments",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "description": "Conditional comments middleware for Atma.IO and Atma.Toolkit",
     "author": {
         "name": "Alex Kit",
