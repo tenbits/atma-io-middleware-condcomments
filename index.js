@@ -2,7 +2,9 @@
 				// source ./templates/RootModule.js
 				(function(){
 					
-					
+					var _node_modules_appcfg_lib_config = {};
+var _src_condcomments = {};
+
 				// source ./templates/ModuleSimplified.js
 				var _node_modules_appcfg_lib_config;
 				(function () {
@@ -1622,10 +1624,8 @@ var CommentBlockHandler = /** @class */ (function () {
         this.reg_IF_Comment = data.reg_IF_Comment;
         this.reg_IF_Expression_Index = data.reg_IF_Expression_Index;
         this.reg_ENDIF_Comment = data.reg_ENDIF_Comment;
+        this.supports = data.supports;
     }
-    CommentBlockHandler.prototype.supports = function (file) {
-        return true;
-    };
     CommentBlockHandler.prototype.next = function (code, index) {
         this.reg_IF_Comment.lastIndex = index;
         var match = this.reg_IF_Comment.exec(code);

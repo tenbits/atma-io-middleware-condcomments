@@ -102,9 +102,7 @@ interface ICommentBlockData {
 }
 
 class CommentBlockHandler {
-	supports(file: any): boolean {
-		return true;
-	}
+	supports: (file: any) => boolean;
 
 	constructor (data: ICommentBlockData) {
 		this.reg_commentEnd = data.reg_commentEnd;
@@ -112,6 +110,7 @@ class CommentBlockHandler {
 		this.reg_IF_Comment = data.reg_IF_Comment;
 		this.reg_IF_Expression_Index = data.reg_IF_Expression_Index;
 		this.reg_ENDIF_Comment = data.reg_ENDIF_Comment;
+		this.supports = data.supports;
 	}
 
 	reg_commentEnd: RegExp
