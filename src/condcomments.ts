@@ -197,7 +197,7 @@ const HANDLERS = [
 	}),
 	new CommentBlockHandler({
 		reg_commentEnd: /\*\//g,
-		reg_oneLineComment: /^[ \t]*((\/\/)|(\/\*[^\n\r]+\*\/))[ \t]*$/gm,
+		reg_oneLineComment: /^[ \t]*((\/\/[^\r\n]+)|(\/\*[^\n\r]+\*\/))[ \t]*$/gm,
 		reg_IF_Comment: /^[ \t]*((\/\/)|(\/\*+))[ \t]*#if[ \t]*(([^\s]+$)|(\([^)\n\r]+\)))/gm,
 		reg_IF_Expression_Index: [ 4 ],
 
