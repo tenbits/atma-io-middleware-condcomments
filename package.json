@@ -14,7 +14,7 @@
     },
     "dependencies": {
         "appcfg": "^0.2.47",
-        "atma-io-middleware-base": "^1.0.10"
+        "atma-io-middleware-base": "^1.0.33"
     },
     "devDependencies": {
         "@types/node": "^8.0.34",

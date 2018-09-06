@@ -1712,7 +1712,9 @@ var condcomments_1 = _src_condcomments;
 module.exports = Base.create({
     name: 'atma-io-middleware-condcomments',
     textOnly: true,
-    defaultOptions: {},
+    defaultOptions: {
+        defines: {}
+    },
     process: condcomments_1.default
 });
 

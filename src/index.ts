@@ -5,7 +5,7 @@ export = Base.create({
     name: 'atma-io-middleware-condcomments',
     textOnly: true,
     defaultOptions: {
-        
+        defines: {}
     },
     process
 });
