@@ -1,6 +1,6 @@
 {
     "name": "atma-io-middleware-condcomments",
-    "version": "1.2.6",
+    "version": "1.2.7",
     "description": "Conditional comments middleware for Atma.IO and Atma.Toolkit",
     "author": {
         "name": "Alex Kit",
@@ -14,12 +14,12 @@
     },
     "dependencies": {
         "appcfg": "^0.2.47",
-        "atma-io-middleware-base": "^1.0.33"
+        "atma-io-middleware-base": "^1.0.37"
     },
     "devDependencies": {
         "@types/node": "^8.0.34",
         "app-bundler": "0.0.35",
-        "atma-io": "^0.2.40",
+        "atma-io": "^1.1.7",
         "atma-loader-ts": "^1.0.0"
     },
     "app-bundler": {
