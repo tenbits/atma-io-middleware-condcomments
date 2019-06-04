@@ -21,5 +21,5 @@ UTest({
 			content.trim(), 
 			'commented',
 			`commented block should be now uncommented add has only one word: 'commented'`);
-	}
+    }    
 })

@@ -1543,7 +1543,13 @@ function processMiddleware(content, file, compiler) {
     var defines = [
         compiler.getOption('defines'),
         compiler.getOption('varDefs'),
+        null,
+        null
     ];
+    if (typeof app !== 'undefined') {
+        defines[2] = app.config && app.config.defines || null;
+        defines[3] = app.current && app.current.defines || null;
+    }
     var handler = HANDLERS.find(function (x) { return x.supports(file); });
     return {
         content: processContent(content, 0, defines, handler),
@@ -1563,8 +1569,12 @@ function processContent(code, index, defines, handler) {
             _a = handler.uncomment(code, match), code = _a[0], index = _a[1];
             break;
         }
+        case (status === 'commented' && doAction === false): {
+            _b = handler.removeComment(code, match), code = _b[0], index = _b[1];
+            break;
+        }
         case (status === 'uncommented' && doAction === false): {
-            _b = handler.comment(code, match), code = _b[0], index = _b[1];
+            _c = handler.comment(code, match), code = _c[0], index = _c[1];
             break;
         }
         default: {
@@ -1573,7 +1583,7 @@ function processContent(code, index, defines, handler) {
         }
     }
     return processContent(code, index, defines, handler);
-    var _a, _b;
+    var _a, _b, _c;
 }
 var Executor;
 (function (Executor) {
@@ -1666,6 +1676,14 @@ var CommentBlockHandler = /** @class */ (function () {
         var value = code.substring(0, currentMatch.index)
             + code.substring(match.index + match[0].length);
         var index = currentMatch.index;
+        return [value, index];
+    };
+    CommentBlockHandler.prototype.removeComment = function (code, expressionMatch) {
+        var currentMatch = expressionMatch.match;
+        var currentEndIndex = currentMatch.index + currentMatch[0].length;
+        this.reg_commentEnd.lastIndex = currentEndIndex;
+        var match = this.reg_commentEnd.exec(code), end = match.index + match[0].length, value = code.substring(0, currentMatch.index) + code.substring(end);
+        var index = currentMatch.index + 1;
         return [value, index];
     };
     return CommentBlockHandler;

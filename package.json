@@ -1,6 +1,6 @@
 {
     "name": "atma-io-middleware-condcomments",
-    "version": "1.2.7",
+    "version": "1.2.8",
     "description": "Conditional comments middleware for Atma.IO and Atma.Toolkit",
     "author": {
         "name": "Alex Kit",
@@ -48,12 +48,25 @@
             "atma-loader-ts"
         ],
         "settings": {
+            "include": {
+                "amd": true,
+                "extentionDefault": {
+                    "js": "ts"
+                }
+            },
             "atma-loader-ts": {
-                "extensions": [
-                    "ts",
-                    "test"
-                ]
+              "extensions": [
+                "ts",
+                "test"
+              ],
+              "typescript": {
+                "compilerOptions": {
+                  "target": "es6",
+                "module": "AMD",
+                  "sourceMap": false
+                }
+              }
             }
-        }
+          }
     }
 }

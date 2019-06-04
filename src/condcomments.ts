@@ -1,5 +1,7 @@
 import { Compiler } from 'atma-io-middleware-base'
 
+declare var app;
+
 /**
  *  Handler can accept as file content - JavaScript String or UglifJS AST Tree
  */
@@ -7,8 +9,14 @@ import { Compiler } from 'atma-io-middleware-base'
 export default function processMiddleware(content: string, file, compiler: Compiler) {
 	let defines = [
 		compiler.getOption('defines'),
-		compiler.getOption('varDefs'),
-	];
+        compiler.getOption('varDefs'),
+        null,
+        null
+    ];
+    if (typeof app !== 'undefined') {
+        defines[2] = app.config && app.config.defines || null;
+        defines[3] = app.current && app.current.defines || null;
+    }
 	let handler = HANDLERS.find(x => x.supports(file));
 	return {
 		content: processContent(content, 0, defines, handler),
@@ -30,6 +38,10 @@ function processContent(code: string, index: number, defines: any[], handler: Co
 	switch (true) {
 		case (status === 'commented' && doAction === true) : {		
 			[code, index] = handler.uncomment(code, match);	
+			break;
+        }
+        case (status === 'commented' && doAction === false) : {
+			[code, index] = handler.removeComment(code, match);	
 			break;
 		}
 		case (status === 'uncommented' && doAction === false): {
@@ -161,7 +173,7 @@ class CommentBlockHandler {
 
 		let index = currentMatch.index + (match.index - currentEndIndex);
 		return [value, index];
-	}
+    }    
 
 	comment(code: string, expressionMatch: CommentExpressionMatch): [string, number] {
 		let currentMatch = expressionMatch.match;
@@ -174,6 +186,20 @@ class CommentBlockHandler {
 			+ code.substring(match.index + match[0].length);
 
 		let index = currentMatch.index;
+		return [value, index];
+    }
+    
+    removeComment(code: string, expressionMatch: CommentExpressionMatch): [string, number] {
+		let currentMatch = expressionMatch.match;
+		let currentEndIndex = currentMatch.index + currentMatch[0].length;
+
+		this.reg_commentEnd.lastIndex = currentEndIndex;
+
+		var match = this.reg_commentEnd.exec(code),
+			end = match.index + match[0].length,
+			value = code.substring(0, currentMatch.index) + code.substring(end);
+
+		let index = currentMatch.index + 1;
 		return [value, index];
 	}
 }
